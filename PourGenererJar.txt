@@ -1,0 +1,5 @@
+Copier ici le contenu du dossier dist
+Déjarrer (dans cet ordre) lib/pdfbox-app-2.0.5.jar et FormulaireCampusFrance.jar
+Modifier le fichier META-INF/MANIFEST.MF pour les références au classpath
+Taper la commande jar cvfm dossiercf.jar META-INF/MANIFEST.MF frames main models org pdf
+
