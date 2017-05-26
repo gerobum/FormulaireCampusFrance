@@ -11,6 +11,8 @@ import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +22,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import mail.Mail;
 import models.CandidatCBRenderer;
 import pdf.PDF;
 
@@ -34,17 +37,22 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
     private JFileChooser readerChooser = null;
     //private final Pattern namePattern = Pattern.compile("([A-Z-]+) (.+)\\_(.+)\\.pdf");
     private final Pattern namePattern = Pattern.compile("(.+)\\.pdf");
-    private PDF pdf;
+    private final PDF pdf;
     private Process pdfreader;
     private String reader;
     private final String FILENAMEREADER = "./.reader4cf";
     private final String FILENAMEDIR = "./.lastdirectory4cf";
     private final String FILENAMEINITIALE = "./.initiale4cf";
+    private final Map<String, String> emailOfChief;
 
     /**
      * Creates new form FormulaireCampusFrance
      */
     public FormulaireCampusFrance() throws IOException {
+        emailOfChief = new HashMap<>();
+        emailOfChief.put("Stéphane Rivière", "stephane.riviere@uha.fr");
+        emailOfChief.put("Bruno Adam", "bruno.adam@uha.fr");
+        emailOfChief.put("Mahmoud Melkemi", "mahmoud.melkemi@uha.fr");
         initComponents();
         setComponentsEnabled(false);
 
@@ -57,12 +65,13 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
         directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         jcbCandidat.setRenderer(new CandidatCBRenderer());
-        
+
         jcbMotif.setSelectedItem(null);
 
         addListener();
 
         pdf = new PDF();
+
     }
 
     private void setComponentsEnabled(boolean enabled) {
@@ -287,7 +296,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
                     .addComponent(jtfDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -324,14 +333,6 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jcbCandidat, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGap(13, 13, 13)
                         .addComponent(jLabel1)
@@ -342,7 +343,15 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jbAnnuler)
                         .addGap(18, 18, 18)
-                        .addComponent(jbValider)))
+                        .addComponent(jbValider))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jcbCandidat, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(144, 144, 144)
@@ -665,15 +674,26 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
         }
         String specialite = (String) jcbSpecialite.getSelectedItem();
         if (specialite != null) {
+            // Création du dossier propre à la spécialité (s'il n'existe pas)
             File file = new File(directory.getCanonicalPath() + "/" + specialite);
             file.mkdir();
+            // et du dossier propre au responsable (s'il n'existe pas)
             file = new File(directory.getCanonicalPath() + "/" + specialite + "/aenvoyera " + jcbResponsable.getSelectedItem());
             file.mkdir();
-            pdf.save(file.getCanonicalPath() + "/" + "FormulaireCF2017 " + ((File) jcbCandidat.getSelectedItem()).getName().replace(".pdf", "") + " Admis " + specialite + " " + jtfInitiales.getText() + ".pdf");
+            // Création du chemin et du nom du formulaire et son remplissage
+            String formPathName = file.getCanonicalPath() + "/" + "FormulaireCF2017 " + ((File) jcbCandidat.getSelectedItem()).getName().replace(".pdf", "") + " Admis " + specialite + " " + jtfInitiales.getText() + ".pdf";
+            pdf.save(formPathName);
+            // Envoi du formulaire
+            String subject = ((File) jcbCandidat.getSelectedItem()).getName().replace(".pdf", "") + " Admis " + specialite + " " + jtfInitiales.getText();
+            String toWho = emailOfChief.get(jcbResponsable.getSelectedItem().toString());
+            File attachment = new File(formPathName);
+            sendMessage(subject, toWho, attachment);
+
             file = new File(directory.getCanonicalPath() + "/" + specialite + "/dossier");
             file.mkdir();
             File from = new File(directory.getCanonicalPath() + "/" + ((File) jcbCandidat.getSelectedItem()).getName());
             File to = new File(file.getCanonicalPath() + "/" + ((File) jcbCandidat.getSelectedItem()).getName().replace(".pdf", "") + " Admis " + specialite + " " + jtfInitiales.getText() + ".pdf");
+
             if (pdfreader != null) {
                 pdfreader.destroy();
             }
@@ -702,12 +722,22 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
             }
             init();
         } else {
+            // Création du dossier propre à la spécialité (s'il n'existe pas)
             specialite = (String) jcbRefuseAdmission.getSelectedItem();
             File file = new File(directory.getCanonicalPath() + "/Refus");
             file.mkdir();
+            // et du dossier propre au responsable (s'il n'existe pas)
             file = new File(directory.getCanonicalPath() + "/Refus/aenvoyera Patricia");
             file.mkdir();
-            pdf.save(file.getCanonicalPath() + "/" + "FormulaireCF2017 " + ((File) jcbCandidat.getSelectedItem()).getName().replace(".pdf", "") + " Refus " + specialite + " " + jtfInitiales.getText() + ".pdf");
+            // Création du chemin et du nom du formulaire et son remplissage        
+            String formPathName = file.getCanonicalPath() + "/" + "FormulaireCF2017 " + ((File) jcbCandidat.getSelectedItem()).getName().replace(".pdf", "") + " Refus " + specialite + " " + jtfInitiales.getText() + ".pdf";
+            pdf.save(formPathName);
+            String subject = ((File) jcbCandidat.getSelectedItem()).getName().replace(".pdf", "") + " Refus " + specialite + " " + jtfInitiales.getText();
+            String toWho = emailOfChief.get(jcbResponsable.getSelectedItem().toString());
+            File attachment = new File(formPathName);
+
+            sendMessage(subject, toWho, attachment);
+
             file = new File(directory.getCanonicalPath() + "/Refus/dossier");
             file.mkdir();
             File from = new File(directory.getCanonicalPath() + "/" + ((File) jcbCandidat.getSelectedItem()).getName());
@@ -716,6 +746,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
             if (pdfreader != null) {
                 pdfreader.destroy();
             }
+
             boolean again = true;
             int n = 0;
             while (again) {
@@ -742,45 +773,52 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
         }
     }
 
-    private void init() {
-        try {
-            pdf = new PDF();
-            jrbL2.setEnabled(false);
-            jrbL3.setEnabled(false);
-            jrbM1.setEnabled(false);
-            jrbM2.setEnabled(false);
-            jrbL2.setSelected(false);
-            jrbL3.setSelected(false);
-            jrbM1.setSelected(false);
-            jrbM2.setSelected(false);
-            jtaObservation.setEnabled(false);
-            jtaObservation.setText("");
-            jtaMotif.setEnabled(false);
-            jtaMotif.setText("");
-            jcbProposeAdmission.setEnabled(false);
-            jcbProposeAdmission.setSelected(false);
-            jcbRefus.setEnabled(false);
-            jcbRefus.setSelected(false);
-            jcbRefuseAdmission.setEnabled(false);
-            jcbRefuseAdmission.setSelectedItem(null);
-            jcbResponsable.setEnabled(false);
-            jcbResponsable.setSelectedItem(null);
-            jcbSpecialite.setEnabled(false);
-            yearsGroup.clearSelection();
-
-            File initiales = new File(/*directory.getAbsoluteFile() + */FILENAMEINITIALE);
-            try (Scanner in = new Scanner(initiales)) {
-                jtfInitiales.setText(in.hasNext() ? in.next() : "");
-            } catch (NullPointerException | FileNotFoundException n) {
-                jtfInitiales.setText("?");
-            }
-
-            initCandidats();
-            initSpecialite();
-            initRefuseAdmissionEn();
-            pack();
-        } catch (IOException ex) {
+    private void sendMessage(String subject, String toWho, File attachment) {
+        String message = String.format("Faut-il envoyer %s à %s ?", subject, toWho);
+        if (JOptionPane.showConfirmDialog(null, message, "Envoi", JOptionPane.INFORMATION_MESSAGE) == JOptionPane.OK_OPTION) {
+            Mail.sendMessage(subject, "yvan.maillot@uha.fr", attachment);
         }
+    }
+
+    private void init() {
+        //pdf = new PDF();
+        jrbL2.setEnabled(false);
+        jrbL3.setEnabled(false);
+        jrbM1.setEnabled(false);
+        jrbM2.setEnabled(false);
+        jrbL2.setSelected(false);
+        jrbL3.setSelected(false);
+        jrbM1.setSelected(false);
+        jrbM2.setSelected(false);
+        jtaObservation.setEnabled(false);
+        jtaObservation.setText("");
+        jtaMotif.setEnabled(false);
+        jtaMotif.setText("");
+        jcbProposeAdmission.setEnabled(false);
+        jcbProposeAdmission.setSelected(false);
+        jcbRefus.setEnabled(false);
+        jcbRefus.setSelected(false);
+        jcbRefuseAdmission.setEnabled(false);
+        jcbRefuseAdmission.setSelectedItem(null);
+        jcbResponsable.setEnabled(false);
+        jcbResponsable.setSelectedItem(null);
+        jcbSpecialite.setEnabled(false);
+        yearsGroup.clearSelection();
+        jcbMotif.setEnabled(false);
+        jcbMotif.setSelectedItem(null);
+
+        File initiales = new File(/*directory.getAbsoluteFile() + */FILENAMEINITIALE);
+        try (Scanner in = new Scanner(initiales)) {
+            jtfInitiales.setText(in.hasNext() ? in.next() : "");
+        } catch (NullPointerException | FileNotFoundException n) {
+            jtfInitiales.setText("?");
+        }
+
+        initCandidats();
+        initSpecialite();
+        initRefuseAdmissionEn();
+        pack();
+
     }
 
     private void initRefuseAdmissionEn() {

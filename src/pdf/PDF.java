@@ -26,7 +26,7 @@ public class PDF {
         this(PDF.class.getResourceAsStream("FormulaireCF2017.pdf"));
     }
 
-    public PDF(InputStream in) throws IOException {
+    private PDF(InputStream in) throws IOException {
         this.document = PDDocument.load(in);
         
         checkL2 = (PDCheckBox) document.getDocumentCatalog().getAcroForm().getField("Case #C3#A0 cocher 1");
@@ -283,9 +283,5 @@ public class PDF {
     
     public void save(String file) throws IOException {
         document.save(file);
-    }
-    
-    public static void main(String[] args) {
-        System.out.println(new File(PDF.class.getResource("FormulaireCF2017.pdf").getFile()));
     }
 }
