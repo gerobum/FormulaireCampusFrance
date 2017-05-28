@@ -77,13 +77,11 @@ public class SessionDialog extends JDialog implements ActionListener {
             session = Session.getInstance(properties, new javax.mail.Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(userName, Arrays.toString(jtfPassword.getPassword()));
+                    return new PasswordAuthentication(userName, new String(jtfPassword.getPassword()));
                 }
             });
-            /*jtfUserName.setText("");
-            jtfPassword.setText("");*/
-            System.out.println("OK");
-            System.out.println(session);
+            jtfUserName.setText("");
+            jtfPassword.setText("");
         }
         setVisible(false);
     }
