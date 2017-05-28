@@ -44,15 +44,18 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
     private final String FILENAMEDIR = "./.lastdirectory4cf";
     private final String FILENAMEINITIALE = "./.initiale4cf";
     private final Map<String, String> emailOfChief;
+    private final Mail mail;
 
     /**
      * Creates new form FormulaireCampusFrance
      */
     public FormulaireCampusFrance() throws IOException {
+        super("Sélection candidats");
         emailOfChief = new HashMap<>();
-        emailOfChief.put("Stéphane Rivière", "stephane.riviere@uha.fr");
-        emailOfChief.put("Bruno Adam", "bruno.adam@uha.fr");
-        emailOfChief.put("Mahmoud Melkemi", "mahmoud.melkemi@uha.fr");
+        emailOfChief.put("Stéphane Rivière", "yvan.maillot@uha.fr");
+        emailOfChief.put("Bruno Adam", "yvan.maillot@uha.fr");
+        emailOfChief.put("Mahmoud Melkemi", "yvan.maillot@uha.fr");
+        emailOfChief.put("refus", "yvan.maillot@uha.fr");
         initComponents();
         setComponentsEnabled(false);
 
@@ -71,6 +74,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
         addListener();
 
         pdf = new PDF();
+        mail = new Mail();
 
     }
 
@@ -733,7 +737,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
             String formPathName = file.getCanonicalPath() + "/" + "FormulaireCF2017 " + ((File) jcbCandidat.getSelectedItem()).getName().replace(".pdf", "") + " Refus " + specialite + " " + jtfInitiales.getText() + ".pdf";
             pdf.save(formPathName);
             String subject = ((File) jcbCandidat.getSelectedItem()).getName().replace(".pdf", "") + " Refus " + specialite + " " + jtfInitiales.getText();
-            String toWho = emailOfChief.get(jcbResponsable.getSelectedItem().toString());
+            String toWho = emailOfChief.get("refus");
             File attachment = new File(formPathName);
 
             sendMessage(subject, toWho, attachment);
@@ -776,7 +780,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
     private void sendMessage(String subject, String toWho, File attachment) {
         String message = String.format("Faut-il envoyer %s à %s ?", subject, toWho);
         if (JOptionPane.showConfirmDialog(null, message, "Envoi", JOptionPane.INFORMATION_MESSAGE) == JOptionPane.OK_OPTION) {
-            Mail.sendMessage(subject, "yvan.maillot@uha.fr", attachment);
+            mail.sendMessage(subject, "yvan.maillot@uha.fr", attachment);
         }
     }
 

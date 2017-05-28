@@ -6,6 +6,7 @@
 package main;
 
 import frames.FormulaireCampusFrance;
+import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -16,6 +17,7 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.PasswordAuthentication;
 
 /**
  *
@@ -31,7 +33,8 @@ public class TestRessource {
         }
         try (PrintWriter out = new PrintWriter(new File(getClass().getResource("initiales.txt").getFile()))) {
             out.println("AB");
-        } catch (IOException ex) {}
+        } catch (IOException ex) {
+        }
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -40,10 +43,13 @@ public class TestRessource {
         /*System.out.println(TestRessource.class.getResource("initiales.txt").toExternalForm());
         try(PrintWriter out = new PrintWriter(TestRessource.class.getResource("initiales.txt").getFile())) {
             out.println("Good bye");
-        }*/
-        try(Scanner in = new Scanner(new File("main/initiales.txt"))) {
+        }
+        try (Scanner in = new Scanner(new File("main/initiales.txt"))) {
             System.out.println(in.nextLine());
             Properties prop;
-        }
+        }*/
+        PasswordAuthentication pa = new PasswordAuthentication("yvan", "c'est moi");
+        System.out.println(pa.getUserName());
+        System.out.println(pa.getPassword());
     }
 }
