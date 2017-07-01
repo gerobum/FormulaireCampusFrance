@@ -1,0 +1,12 @@
+cd ~/Développement/GitHub/FormulaireCampusFrance/PourGenererJar/
+rm -f -r frames main models org pdf META-INF
+cp ../dist/FormulaireCampusFrance.jar .
+unzip FormulaireCampusFrance.jar
+rm -f FormulaireCampusFrance.jar
+cp ../dist/lib/pdfbox-app-2.0.6.jar .
+rm -f -r META-INF
+unzip pdfbox-app-2.0.6.jar
+rm -f -r META-INF
+rm *.jar
+jar cvfm dossierscf.jar manifestdossierscf.mf frames main models org pdf
+

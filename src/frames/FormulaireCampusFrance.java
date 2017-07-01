@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import models.CandidatCBRenderer;
-import pdf.PDF;
+import pdf.FormulaireCFPDF;
 
 /**
  *
@@ -34,7 +34,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
     private JFileChooser readerChooser = null;
     //private final Pattern namePattern = Pattern.compile("([A-Z-]+) (.+)\\_(.+)\\.pdf");
     private final Pattern namePattern = Pattern.compile("(.+)\\.pdf");
-    private PDF pdf;
+    private FormulaireCFPDF pdf;
     private Process pdfreader;
     private String reader;
     private final String FILENAMEREADER = "./.reader4cf";
@@ -62,7 +62,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
 
         addListener();
 
-        pdf = new PDF();
+        pdf = new FormulaireCFPDF();
     }
 
     private void setComponentsEnabled(boolean enabled) {
@@ -122,26 +122,26 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
         jPanel1 = new javax.swing.JPanel();
         jcbProposeAdmission = new javax.swing.JCheckBox();
         jLabel4 = new javax.swing.JLabel();
-        jcbSpecialite = new javax.swing.JComboBox<>();
+        jcbSpecialite = new javax.swing.JComboBox<String>();
         jScrollPane1 = new javax.swing.JScrollPane();
         jtaObservation = new javax.swing.JTextArea();
         jLabel5 = new javax.swing.JLabel();
         jcbRefus = new javax.swing.JCheckBox();
-        jcbRefuseAdmission = new javax.swing.JComboBox<>();
+        jcbRefuseAdmission = new javax.swing.JComboBox<String>();
         jLabel6 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jtaMotif = new javax.swing.JTextArea();
         jLabel7 = new javax.swing.JLabel();
-        jcbResponsable = new javax.swing.JComboBox<>();
+        jcbResponsable = new javax.swing.JComboBox<String>();
         jLabel8 = new javax.swing.JLabel();
         jtfDate = new javax.swing.JTextField();
         jrbL2 = new javax.swing.JRadioButton();
         jrbL3 = new javax.swing.JRadioButton();
         jrbM1 = new javax.swing.JRadioButton();
         jrbM2 = new javax.swing.JRadioButton();
-        jcbMotif = new javax.swing.JComboBox<>();
+        jcbMotif = new javax.swing.JComboBox<String>();
         jbDossierCampusFranceLoad = new javax.swing.JButton();
-        jcbCandidat = new javax.swing.JComboBox<>();
+        jcbCandidat = new javax.swing.JComboBox<File>();
         jtfInitiales = new javax.swing.JTextField();
         jbValider = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -172,7 +172,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
 
         jcbRefus.setText("Refuse l'admission en :");
 
-        jcbRefuseAdmission.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " ", " ", " " }));
+        jcbRefuseAdmission.setModel(new javax.swing.DefaultComboBoxModel(new String[] { " ", " ", " " }));
 
         jLabel6.setText("Pour le motif suivant :");
 
@@ -182,7 +182,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
 
         jLabel7.setText("Responsable de filière");
 
-        jcbResponsable.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Stéphane Rivière", "Bruno Adam", "Mahmoud Melkemi" }));
+        jcbResponsable.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Stéphane Rivière", "Bruno Adam", "Mahmoud Melkemi" }));
 
         jLabel8.setText("Date et signature :");
 
@@ -207,7 +207,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
         jrbM2.setText("M2");
 
         jcbMotif.setEditable(true);
-        jcbMotif.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Le dossier ne présente pas les compétences requises" }));
+        jcbMotif.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Le dossier ne présente pas les compétences requises" }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -217,7 +217,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 138, Short.MAX_VALUE)
+                        .addGap(0, 188, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel8)
@@ -287,7 +287,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
                     .addComponent(jtfDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -324,14 +324,6 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jcbCandidat, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGap(13, 13, 13)
                         .addComponent(jLabel1)
@@ -342,7 +334,15 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jbAnnuler)
                         .addGap(18, 18, 18)
-                        .addComponent(jbValider)))
+                        .addComponent(jbValider))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jcbCandidat, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(144, 144, 144)
@@ -744,7 +744,7 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
 
     private void init() {
         try {
-            pdf = new PDF();
+            pdf = new FormulaireCFPDF();
             jrbL2.setEnabled(false);
             jrbL3.setEnabled(false);
             jrbM1.setEnabled(false);
