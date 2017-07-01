@@ -767,6 +767,8 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
             jcbResponsable.setSelectedItem(null);
             jcbSpecialite.setEnabled(false);
             yearsGroup.clearSelection();
+            jcbMotif.setSelectedItem(null);
+            jcbMotif.setEnabled(false);
 
             File initiales = new File(/*directory.getAbsoluteFile() + */FILENAMEINITIALE);
             try (Scanner in = new Scanner(initiales)) {
