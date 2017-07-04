@@ -1,4 +1,4 @@
-package pdf;
+package frames;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +16,8 @@ import org.apache.pdfbox.text.PDFTextStripper;
  *
  * @author yvan
  */
-public class RenommageDossiersPDF {
+public class PanneauRenommageDossiersPDF extends JFileChooser {
+
     private PDDocument document;
     public String lastname, firstname, firstline;
 
@@ -34,7 +35,7 @@ public class RenommageDossiersPDF {
         firstname = flname.substring(j + 1, i + 1).trim();
     }
 
-    public RenommageDossiersPDF(File f) {
+    public PanneauRenommageDossiersPDF(File f) {
         try {
             this.document = PDDocument.load(f);
 
@@ -52,6 +53,7 @@ public class RenommageDossiersPDF {
     }
 
     public static void main(String[] args) throws IOException {
+
         File config = new File(".configuration.rename.dossierCF");
         File directory;
         if (Files.exists(config.toPath())) {
@@ -62,18 +64,17 @@ public class RenommageDossiersPDF {
             directory = new File(".");
         }
         JFileChooser directoryChooser = new JFileChooser(directory);
-        directoryChooser.setDialogTitle("Choix un dossier contenant des dossiers CF à renommer");
+        directoryChooser.setDialogTitle("Choisir un dossier contenant des dossiers CF à renommer");
         directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-   
+
         if (directoryChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             directory = directoryChooser.getSelectedFile();
             int x = 0;
-//            for (File f : directory.listFiles((d,n)->{return n.matches("[A-Z]{2}?-[0-9]{5}-[A-Z][0-9]{2}-[0-9]{2}.pdf");})) {
             for (File f : directory.listFiles((d, n) -> {
                 return n.matches("[A-Z]{2}?[0-9]{2}?-[0-9]{5}-[A-Z][0-9]{2}-[0-9]{2}\\.pdf");
             })) {
 
-                RenommageDossiersPDF dcpdf = new RenommageDossiersPDF(f);
+                PanneauRenommageDossiersPDF dcpdf = new PanneauRenommageDossiersPDF(f);
                 System.out.println("---------------------------------------------------");
                 System.out.println(f.getName());
                 System.out.println(dcpdf.firstline);
@@ -84,10 +85,10 @@ public class RenommageDossiersPDF {
                 f.renameTo(dest);
             }
             System.out.printf("%d fichiers traités\n", x);
-            
-            try(PrintWriter out = new PrintWriter(new FileWriter(config))) {
+
+            try (PrintWriter out = new PrintWriter(new FileWriter(config))) {
                 out.println(directory.getAbsolutePath());
-            } 
+            }
         }
     }
 }

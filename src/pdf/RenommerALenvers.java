@@ -21,7 +21,7 @@ public class RenommerALenvers {
  
 
     public static void main(String[] args) throws IOException {
-        Pattern pattern = Pattern.compile("(.*)_([A-Z]{2}[0-9]{2}?-[0-9]{5}-[A-Z][0-9]{2}-[0-9]{2}\\.pdf)");
+        Pattern pattern = Pattern.compile("(.*)_([A-Z]{2}[0-9]{2}?-[0-9]{5}-[A-Z][0-9]{2}-[0-9]{2}).*\\.pdf");
         File config = new File(".configuration.rename.dossierCF");
         File directory;
         if (Files.exists(config.toPath())) {
@@ -46,7 +46,7 @@ public class RenommerALenvers {
                 if (m.matches()) {
                     //System.out.println(m.group(1));
                     //System.out.println(m.group(2));
-                    File dest = new File(f.getParent(), m.group(2));
+                    File dest = new File(f.getParent(), m.group(2)+".pdf");
                     f.renameTo(dest);
                 }
                 ++x;
