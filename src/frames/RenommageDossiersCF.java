@@ -92,7 +92,7 @@ public class RenommageDossiersCF extends JFrame implements ActionListener {
                 directory = directoryChooser.getSelectedFile();
 
                 for (File f : directory.listFiles((d, n) -> {
-                    return n.matches("[A-Z]{2}?[0-9]{2}?-[0-9]{5}-[A-Z][0-9]{2}-[0-9]{2}\\.pdf");
+                    return n.matches("dossier_[A-Z]{2}?[0-9]{2}?-[0-9]{5}-[A-Z][0-9]{2}-[0-9]{2}\\.pdf");
                 })) {
 
                     list.add(f);
@@ -143,7 +143,7 @@ public class RenommageDossiersCF extends JFrame implements ActionListener {
             renommage.setVisible(false);
             for (File f : list) {
                 PanneauRenommageDossiersPDF dcpdf = new PanneauRenommageDossiersPDF(f);
-                File dest = new File(f.getParentFile(), dcpdf.lastname + " " + dcpdf.firstname + "_" + f.getName());                
+                File dest = new File(f.getParentFile(), dcpdf.lastname + " " + dcpdf.firstname + "_" + f.getName().replace("dossier_", ""));                
                 ta.append(f.getName() + " ==> " + dest.getName() + "\n");
                 f.renameTo(dest);
             }

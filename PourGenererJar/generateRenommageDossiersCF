@@ -8,5 +8,5 @@ rm -f -r META-INF
 unzip pdfbox-app-2.0.6.jar
 rm -f -r META-INF
 rm *.jar
-jar cvfm renommageDossiersCF.jar manifestrenommagedossierscf.mf frames main models org pdf
+~/java/jdk1.8.0_60/bin/jar cvfm renommageDossiersCF.jar manifestrenommagedossierscf.mf frames main models org pdf
 

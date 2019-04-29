@@ -817,10 +817,10 @@ public class FormulaireCampusFrance extends javax.swing.JFrame implements Action
                 case "L3 MIAGE ou L3 INFO":
                 case "M1 MIAGE ou M1 INFO":
                     jcbResponsable.addItem("Bruno Adam");
-                    jcbResponsable.addItem("Mahmoud Melkemi");
+                    jcbResponsable.addItem("Frédéric Cordier");
                     break;
                 default:
-                    jcbResponsable.addItem("Mahmoud Melkemi");
+                    jcbResponsable.addItem("Frédéric Cordier");
                     break;
             }
         } else {
