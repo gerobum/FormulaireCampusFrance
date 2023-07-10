@@ -1,4 +1,4 @@
-cd ~/Développement/GitHub/FormulaireCampusFrance/PourGenererJar/
+cd ~/Development/GitHub/FormulaireCampusFrance/PourGenererJar/
 rm -f -r frames main models org pdf META-INF
 cp ../dist/FormulaireCampusFrance.jar .
 unzip FormulaireCampusFrance.jar
